@@ -36,7 +36,7 @@ public static class Calculation
         }
     }
 
-    public static IEnumerable<string> Do(string[] lines, int ckIndex, int tcgIndex, int mcmIndex, char comma = ',')
+    public static IEnumerable<string> Do(string[] lines, int ckIndex, int tcgIndex, int mcmIndex, char comma = ',', bool skipFirstLine = true)
     {
         var ckAmount = 0;
         var ckySum = 0.0d;
@@ -51,7 +51,7 @@ public static class Calculation
         var tcgxxSum = 0.0d;
 
         var cellLines = new List<(string line, double mcmPrice, double ckPrice, double tcgPrice)>(lines.Length);
-        foreach (var line in lines.Skip(1))
+        foreach (var line in lines.Skip(skipFirstLine ? 1 : 0))
         {
             try
             {
@@ -123,7 +123,10 @@ public static class Calculation
         var comparer = Comparer<double>.Default;
         cellLines.Sort((a, b) => comparer.Compare(ComparisonNumber(b), ComparisonNumber(a)));
 
-        yield return lines[0] + comma + "Value";
+        if (skipFirstLine)
+        {
+            yield return lines[0] + comma + "Value";
+        }
 
         foreach (var line in cellLines)
         {
