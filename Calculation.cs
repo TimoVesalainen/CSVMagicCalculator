@@ -36,7 +36,10 @@ public static class Calculation
         }
     }
 
-    private class StatisticalData
+    /// <summary>
+    /// Helper to contain aggregate data
+    /// </summary>
+    private sealed class StatisticalData
     {
         public int Amount = 0;
         public double YSum = 0;
@@ -66,11 +69,17 @@ public static class Calculation
         }
     }
 
+    /// <summary>
+    /// Calculate linear trend between primary value and secondary values,
+    /// and use them to estimate primary value when it is missing
+    /// </summary>
     public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int[] secondaryIndicis, char comma, bool printValue)
     {
         var accumulatedData = secondaryIndicis.Select(_ => new StatisticalData()).ToArray();
         var cacheSize = lines.TryGetNonEnumeratedCount(out var _cacheSize) ? _cacheSize : 4;
         var cellLines = new List<(string line, double primaryPrice, List<double> secondaryPrices)>(cacheSize);
+
+        // Parse lines as CSV, parse values and accumulate data for conversions
         foreach (var line in lines)
         {
             try
@@ -110,6 +119,7 @@ public static class Calculation
                 throw;
             }
         }
+        // Calculate conversion functions from secondary values to primary value
         var conversionFunctions = accumulatedData.Select(data => data.GetYToXFunction()).ToArray();
 
         double ComparisonNumber((string line, double primaryPrice, List<double> secondaryPrices) row)
@@ -129,6 +139,7 @@ public static class Calculation
         }
 
         var comparer = Comparer<double>.Default;
+        // Sort to descending order
         cellLines.Sort((a, b) => comparer.Compare(ComparisonNumber(b), ComparisonNumber(a)));
 
         foreach (var line in cellLines)
