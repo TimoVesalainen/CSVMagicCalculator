@@ -103,8 +103,6 @@ public static class Calculation
         var mkmToTcgCorr = (tcgAmount * tcgxySum - tcgxSum * tcgySum) / (tcgAmount * tcgxxSum - tcgxSum * tcgxSum);
         var mkmToTcgConst = (tcgySum - mkmToTcgCorr * tcgxSum) / tcgAmount;
 
-        Console.WriteLine((mkmToCkCorr, mkmToCkConst, mkmToTcgCorr, mkmToTcgConst));
-
         double ComparisonNumber((string line, double mcmPrice, double ckPrice, double tcgPrice) row)
         {
             if (row.mcmPrice > 0)
