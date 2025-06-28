@@ -125,7 +125,7 @@ public static class Calculation
 
         foreach (var line in cellLines)
         {
-            yield return String.Join(comma, line.line) + comma + ComparisonNumber(line).ToString("N2");
+            yield return line.line + comma + ComparisonNumber(line).ToString("N2");
         }
     }
 }
