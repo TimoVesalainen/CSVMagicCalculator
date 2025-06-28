@@ -36,22 +36,41 @@ public static class Calculation
         }
     }
 
-    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int ckIndex, int tcgIndex, char comma, bool printValue)
+    private class StatisticalData
     {
-        var ckAmount = 0;
-        var ckySum = 0.0d;
-        var ckxSum = 0.0d;
-        var ckxySum = 0.0d;
-        var ckxxSum = 0.0d;
+        public int Amount = 0;
+        public double YSum = 0;
+        public double XSum = 0;
+        public double XYSum = 0;
+        public double XXSum = 0;
 
-        var tcgAmount = 0;
-        var tcgySum = 0.0d;
-        var tcgxSum = 0.0d;
-        var tcgxySum = 0.0d;
-        var tcgxxSum = 0.0d;
+        public StatisticalData()
+        {
+        }
 
+        public void AddDataPoint(double x, double y)
+        {
+            Amount++;
+            YSum += y;
+            XSum += x;
+            XYSum += y * x;
+            XXSum += x * x;
+        }
+
+        public Func<double, double> GetYToXFunction()
+        {
+            var xToYCorrelation = (Amount * XYSum - XSum * YSum) / (Amount * XXSum - XSum * XSum);
+            var xToYConstant = (YSum - xToYCorrelation * XSum) / Amount;
+
+            return (yValue) => (yValue - xToYConstant) / xToYCorrelation;
+        }
+    }
+
+    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int[] secondaryIndicis, char comma, bool printValue)
+    {
+        var accumulatedData = secondaryIndicis.Select(_ => new StatisticalData()).ToArray();
         var cacheSize = lines.TryGetNonEnumeratedCount(out var _cacheSize) ? _cacheSize : 4;
-        var cellLines = new List<(string line, double mcmPrice, double ckPrice, double tcgPrice)>(cacheSize);
+        var cellLines = new List<(string line, double primaryPrice, List<double> secondaryPrices)>(cacheSize);
         foreach (var line in lines)
         {
             try
@@ -63,59 +82,48 @@ public static class Calculation
                     continue;
                 }
 
-                var ckPrice = double.Parse(cells[ckIndex]);
-                var tcgPrice = double.Parse(cells[tcgIndex]);
-                var primaryPrice = double.Parse(cells[primaryIndex]);
+                var havePrimaryPrice = double.TryParse(cells[primaryIndex], out var primaryPrice);
 
-                if (primaryPrice != 0)
+                var secondaryPrices = new List<double>(secondaryIndicis.Length);
+                foreach (var (data, dataIndex) in accumulatedData.Zip(secondaryIndicis))
                 {
-                    if (ckPrice != 0)
+                    if (double.TryParse(cells[dataIndex], out var secondaryPrice) && secondaryPrice > 0)
                     {
-                        ckAmount++;
-                        ckySum += ckPrice;
-                        ckxSum += primaryPrice;
-                        ckxySum += ckPrice * primaryPrice;
-                        ckxxSum += primaryPrice * primaryPrice;
+                        if (havePrimaryPrice && primaryPrice > 0)
+                        {
+                            // Only add valid prices as data points
+                            data.AddDataPoint(primaryPrice, secondaryPrice);
+                        }
+                        secondaryPrices.Add(secondaryPrice);
                     }
-
-                    if (tcgPrice != 0)
+                    else
                     {
-                        tcgAmount++;
-                        tcgySum += tcgPrice;
-                        tcgxSum += primaryPrice;
-                        tcgxySum += tcgPrice * primaryPrice;
-                        tcgxxSum += primaryPrice * primaryPrice;
+                        secondaryPrices.Add(0);
                     }
                 }
+                cellLines.Add((line, primaryPrice, secondaryPrices));
 
-                cellLines.Add((line, primaryPrice, ckPrice, tcgPrice));
             }
             catch (Exception)
             {
-                Console.Error.WriteLine("Line: " + line);
+                Console.Error.WriteLine("Error in line: " + line);
                 throw;
             }
         }
+        var conversionFunctions = accumulatedData.Select(data => data.GetYToXFunction()).ToArray();
 
-        var mkmToCkCorr = (ckAmount * ckxySum - ckxSum * ckySum) / (ckAmount * ckxxSum - ckxSum * ckxSum);
-        var mkmToCkConst = (ckySum - mkmToCkCorr * ckxSum) / ckAmount;
-
-        var mkmToTcgCorr = (tcgAmount * tcgxySum - tcgxSum * tcgySum) / (tcgAmount * tcgxxSum - tcgxSum * tcgxSum);
-        var mkmToTcgConst = (tcgySum - mkmToTcgCorr * tcgxSum) / tcgAmount;
-
-        double ComparisonNumber((string line, double mcmPrice, double ckPrice, double tcgPrice) row)
+        double ComparisonNumber((string line, double primaryPrice, List<double> secondaryPrices) row)
         {
-            if (row.mcmPrice > 0)
+            if (row.primaryPrice > 0)
             {
-                return row.mcmPrice;
+                return row.primaryPrice;
             }
-            if (row.ckPrice > 0)
+            foreach (var (secondaryPrice, conversion) in row.secondaryPrices.Zip(conversionFunctions))
             {
-                return (row.ckPrice - mkmToCkConst) / mkmToCkCorr;
-            }
-            if (row.tcgPrice > 0)
-            {
-                return (row.tcgPrice - mkmToTcgConst) / mkmToTcgCorr;
+                if (secondaryPrice > 0)
+                {
+                    return conversion(secondaryPrice);
+                }
             }
             return 0;
         }
