@@ -1,6 +1,6 @@
 public static class Calculation
 {
-    public static IEnumerable<string> Do(string[] lines, int ckIndex, int tcgIndex, int mcmIndex)
+    public static IEnumerable<string> Do(string[] lines, int ckIndex, int tcgIndex, int mcmIndex, char comma = ',')
     {
         var ckAmount = 0;
         var ckySum = 0.0d;
@@ -35,7 +35,7 @@ public static class Calculation
                         }
                         else
                         {
-                            var indexOfEnd = line.IndexOf(',', i);
+                            var indexOfEnd = line.IndexOf(comma, i);
                             if (indexOfEnd < 0)
                             {
                                 indexOfEnd = line.Length;
@@ -50,7 +50,7 @@ public static class Calculation
                 }
                 else
                 {
-                    cells = line.Split(",");
+                    cells = line.Split(comma);
                 }
 
                 if (cells.Length == 0)
@@ -121,11 +121,11 @@ public static class Calculation
         var comparer = Comparer<double>.Default;
         cellLines.Sort((a, b) => comparer.Compare(ComparisonNumber(b), ComparisonNumber(a)));
 
-        yield return lines[0] + ",Value";
+        yield return lines[0] + comma + "Value";
 
         foreach (var line in cellLines)
         {
-            yield return String.Join(",", line.line) + "," + ComparisonNumber(line).ToString("N2");
+            yield return String.Join(comma, line.line) + comma + ComparisonNumber(line).ToString("N2");
         }
     }
 }
