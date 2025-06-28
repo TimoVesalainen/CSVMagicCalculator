@@ -36,7 +36,7 @@ public static class Calculation
         }
     }
 
-    public static IEnumerable<string> Do(IEnumerable<string> lines, int ckIndex, int tcgIndex, int mcmIndex, char comma, bool printValue)
+    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int ckIndex, int tcgIndex, char comma, bool printValue)
     {
         var ckAmount = 0;
         var ckySum = 0.0d;
@@ -65,30 +65,30 @@ public static class Calculation
 
                 var ckPrice = double.Parse(cells[ckIndex]);
                 var tcgPrice = double.Parse(cells[tcgIndex]);
-                var mcmPrice = double.Parse(cells[mcmIndex]);
+                var primaryPrice = double.Parse(cells[primaryIndex]);
 
-                if (mcmPrice != 0)
+                if (primaryPrice != 0)
                 {
                     if (ckPrice != 0)
                     {
                         ckAmount++;
                         ckySum += ckPrice;
-                        ckxSum += mcmPrice;
-                        ckxySum += ckPrice * mcmPrice;
-                        ckxxSum += mcmPrice * mcmPrice;
+                        ckxSum += primaryPrice;
+                        ckxySum += ckPrice * primaryPrice;
+                        ckxxSum += primaryPrice * primaryPrice;
                     }
 
                     if (tcgPrice != 0)
                     {
                         tcgAmount++;
                         tcgySum += tcgPrice;
-                        tcgxSum += mcmPrice;
-                        tcgxySum += tcgPrice * mcmPrice;
-                        tcgxxSum += mcmPrice * mcmPrice;
+                        tcgxSum += primaryPrice;
+                        tcgxySum += tcgPrice * primaryPrice;
+                        tcgxxSum += primaryPrice * primaryPrice;
                     }
                 }
 
-                cellLines.Add((line, mcmPrice, ckPrice, tcgPrice));
+                cellLines.Add((line, primaryPrice, ckPrice, tcgPrice));
             }
             catch (Exception)
             {

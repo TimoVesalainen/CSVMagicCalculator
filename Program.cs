@@ -18,7 +18,7 @@ if (skipFirstLine)
 {
     await writer.WriteLineAsync(lines[0] + comma + "Value");
 }
-foreach (var line in Calculation.Do(lines.Skip(skipFirstLine ? 1 : 0), ckIndex, tcgIndex, mcmIndex, comma, printValue))
+foreach (var line in Calculation.Do(lines.Skip(skipFirstLine ? 1 : 0), mcmIndex, ckIndex, tcgIndex, comma, printValue))
 {
     await writer.WriteLineAsync(line);
 }
