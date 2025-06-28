@@ -103,12 +103,8 @@ public static class Calculation
                             // Only add valid prices as data points
                             data.AddDataPoint(primaryPrice, secondaryPrice);
                         }
-                        secondaryPrices.Add(secondaryPrice);
                     }
-                    else
-                    {
-                        secondaryPrices.Add(0);
-                    }
+                    secondaryPrices.Add(secondaryPrice);
                 }
                 cellLines.Add((line, primaryPrice, secondaryPrices));
 
