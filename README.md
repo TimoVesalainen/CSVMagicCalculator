@@ -25,3 +25,7 @@ Run `dotnet build`.
     Output (pos. 1)                        Required. Path to output file to write results to
     Primary data column index (pos. 2)     Required. Zero-index position of column of primary data column
     Second data column indexis (pos. 3)    Zero-index position of columns of secondary data columns
+
+## Example
+
+    dotnet run -- .\archidekt-collection-export-2025-06-22(2).csv out.csv 8 6 7
