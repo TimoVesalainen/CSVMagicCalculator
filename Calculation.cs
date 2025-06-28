@@ -67,7 +67,6 @@ public static class Calculation
                 var tcgPrice = double.Parse(cells[tcgIndex]);
                 var mcmPrice = double.Parse(cells[mcmIndex]);
 
-                Console.WriteLine((ckPrice, tcgPrice, mcmPrice));
                 if (mcmPrice != 0)
                 {
                     if (ckPrice != 0)
