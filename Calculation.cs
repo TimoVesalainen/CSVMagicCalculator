@@ -36,7 +36,7 @@ public static class Calculation
         }
     }
 
-    public static IEnumerable<string> Do(IEnumerable<string> lines, int ckIndex, int tcgIndex, int mcmIndex, char comma = ',', bool printValue = true)
+    public static IEnumerable<string> Do(IEnumerable<string> lines, int ckIndex, int tcgIndex, int mcmIndex, char comma, bool printValue)
     {
         var ckAmount = 0;
         var ckySum = 0.0d;
