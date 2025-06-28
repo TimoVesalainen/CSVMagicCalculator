@@ -36,7 +36,7 @@ public static class Calculation
         }
     }
 
-    public static IEnumerable<string> Do(IEnumerable<string> lines, int ckIndex, int tcgIndex, int mcmIndex, char comma = ',')
+    public static IEnumerable<string> Do(IEnumerable<string> lines, int ckIndex, int tcgIndex, int mcmIndex, char comma = ',', bool printValue = true)
     {
         var ckAmount = 0;
         var ckySum = 0.0d;
@@ -125,7 +125,14 @@ public static class Calculation
 
         foreach (var line in cellLines)
         {
-            yield return line.line + comma + ComparisonNumber(line).ToString("N2");
+            if (printValue)
+            {
+                yield return line.line + comma + ComparisonNumber(line).ToString("N2");
+            }
+            else
+            {
+                yield return line.line;
+            }
         }
     }
 }
