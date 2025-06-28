@@ -73,7 +73,7 @@ public static class Calculation
     /// Calculate linear trend between primary value and secondary values,
     /// and use them to estimate primary value when it is missing
     /// </summary>
-    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int[] secondaryIndicis, char comma, bool printValue)
+    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int[] secondaryIndicis, char comma, bool printComparison)
     {
         var accumulatedData = secondaryIndicis.Select(_ => new StatisticalData()).ToArray();
         var cacheSize = lines.TryGetNonEnumeratedCount(out var _cacheSize) ? _cacheSize : 4;
@@ -122,7 +122,7 @@ public static class Calculation
         // Calculate conversion functions from secondary values to primary value
         var conversionFunctions = accumulatedData.Select(data => data.GetYToXFunction()).ToArray();
 
-        double ComparisonNumber((string line, double primaryPrice, List<double> secondaryPrices) row)
+        double ComparisonValue((string line, double primaryPrice, List<double> secondaryPrices) row)
         {
             if (row.primaryPrice > 0)
             {
@@ -140,13 +140,13 @@ public static class Calculation
 
         var comparer = Comparer<double>.Default;
         // Sort to descending order
-        cellLines.Sort((a, b) => comparer.Compare(ComparisonNumber(b), ComparisonNumber(a)));
+        cellLines.Sort((a, b) => comparer.Compare(ComparisonValue(b), ComparisonValue(a)));
 
         foreach (var line in cellLines)
         {
-            if (printValue)
+            if (printComparison)
             {
-                yield return line.line + comma + ComparisonNumber(line).ToString("N2");
+                yield return line.line + comma + ComparisonValue(line).ToString("N2");
             }
             else
             {
