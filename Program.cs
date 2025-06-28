@@ -14,7 +14,7 @@ using var output = File.Open(outputPath, FileMode.OpenOrCreate);
 using var writer = new StreamWriter(output);
 if (skipFirstLine)
 {
-    await writer.WriteLineAsync(lines[0]);
+    await writer.WriteLineAsync(lines[0] + ",Value");
 }
 foreach (var line in Calculation.Do(lines.Skip(skipFirstLine ? 1 : 0), ckIndex, tcgIndex, mcmIndex))
 {
