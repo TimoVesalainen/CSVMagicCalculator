@@ -125,7 +125,7 @@ double ComparisonNumber((string line, double mcmPrice, double ckPrice, double tc
 }
 
 var comparer = Comparer<double>.Default;
-cellLines.Sort((a, b) => comparer.Compare(ComparisonNumber(a), ComparisonNumber(b)));
+cellLines.Sort((a, b) => comparer.Compare(ComparisonNumber(b) , ComparisonNumber(a)));
 
 using var output = File.Open(outputPath, FileMode.OpenOrCreate);
 
