@@ -2,16 +2,16 @@ using CommandLine;
 
 public sealed class CommandLineOptions
 {
-    [Value(0, Required = true, HelpText = "Path to input file to read from")]
+    [Value(0, MetaName = "Input", Required = true, HelpText = "Path to input file to read from")]
     public string InputCSVFile { get; set; } = "";
 
-    [Value(1, Required = true, HelpText = "Path to output file to write results to")]
+    [Value(1, MetaName = "Output", Required = true, HelpText = "Path to output file to write results to")]
     public string OutputCSVFile { get; set; } = "";
 
-    [Value(2, Required = true, HelpText = "Zero-index position of column of primary data column")]
+    [Value(2, MetaName = "Primary data column index", Required = true, HelpText = "Zero-index position of column of primary data column")]
     public int PrimaryDataColumn { get; set; }
 
-    [Value(3, HelpText = "Zero-index position of columns of secondary data columns")]
+    [Value(3, MetaName = "Second data column indexis", HelpText = "Zero-index position of columns of secondary data columns")]
     public IEnumerable<int> SecondaryDataColumns { get; set; } = [];
 
     [Option('s', "skipFirstLine", Default = true, HelpText = "Skip the processing of first line of input file")]
