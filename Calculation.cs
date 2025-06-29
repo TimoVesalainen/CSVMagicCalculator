@@ -73,7 +73,7 @@ public static class Calculation
     /// Calculate linear trend between primary value and secondary values,
     /// and use them to estimate primary value when it is missing
     /// </summary>
-    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int[] secondaryIndicis, char comma, bool printComparison)
+    public static IEnumerable<string> Do(IEnumerable<string> lines, int primaryIndex, int[] secondaryIndicis, char comma, bool printComparison, int? groupBy)
     {
         var accumulatedData = secondaryIndicis.Select(_ => new StatisticalData()).ToArray();
         var cacheSize = lines.TryGetNonEnumeratedCount(out var _cacheSize) ? _cacheSize : 4;

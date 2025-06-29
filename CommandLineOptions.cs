@@ -23,8 +23,6 @@ public sealed class CommandLineOptions
     [Option('v', "printValue", Default = false, HelpText = "Print the value used for comparison in the output")]
     public bool PrintValue { get; set; }
 
-    public override string ToString()
-    {
-        return InputCSVFile + " " + OutputCSVFile + " " + PrimaryDataColumn;
-    }
+    [Option('g', "groupBy", Default = null, HelpText = "Group rows by data as if they had the value of first in group")]
+    public int? GroupBy { get; set; }
 }

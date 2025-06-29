@@ -15,7 +15,7 @@ await result.WithParsedAsync(async (arguments) =>
     {
         await writer.WriteLineAsync(lines[0] + arguments.Comma + "Value");
     }
-    foreach (var line in Calculation.Do(lines.Skip(arguments.SkipFirstLine ? 1 : 0), arguments.PrimaryDataColumn, [.. arguments.SecondaryDataColumns], arguments.Comma, arguments.PrintValue))
+    foreach (var line in Calculation.Do(lines.Skip(arguments.SkipFirstLine ? 1 : 0), arguments.PrimaryDataColumn, [.. arguments.SecondaryDataColumns], arguments.Comma, arguments.PrintValue, arguments.GroupBy))
     {
         await writer.WriteLineAsync(line);
     }
